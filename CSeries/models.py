@@ -3,6 +3,7 @@ from django.db import models
 
 class TVShow(models.Model):
     show_id = models.IntegerField()
+    is_finished = models.BooleanField()
     user = models.CharField(max_length=100)
 
     def __str__(self):
@@ -37,9 +38,11 @@ class Favorites(models.Model):
         return str(self.tv_show)
 
 
+'''
 class Comments(models.Model):
     tv_show = models.ForeignKey(TVShow, on_delete=models.CASCADE)
     user = models.CharField(max_length=100)
 
     def __str__(self):
         return str(self.tv_show)
+'''
