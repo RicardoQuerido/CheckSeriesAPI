@@ -11,9 +11,6 @@ urlpatterns = [
     path('ws/updatetvshow', views.update_tv_show),
     path('ws/unfollowtvshow/<int:id>', views.unfollow_tv_show),
 
-    path('ws/checkseason', views.check_season),
-    path('ws/uncheckseason/<int:id>', views.uncheck_season),
-
     path('ws/checkepisode', views.check_episode),
     path('ws/uncheckepisode/<int:id>', views.uncheck_episode),
     path('ws/episodes', views.get_all_episodes),
@@ -21,5 +18,8 @@ urlpatterns = [
     path('ws/favoritetvshow', views.favorite_tv_show),
     path('ws/unfavoritetvshow/<int:id>', views.unfavorite_tv_show),
     path('ws/favoritetvshows', views.get_all_favorite_tv_shows),
+
+    path('authenticate', views.CustomAuthToken.as_view()),
+    path('signup', views.sign_up)
 
 ]

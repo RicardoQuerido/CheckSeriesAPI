@@ -1,35 +1,35 @@
 from rest_framework import serializers
 
-from CSeries.models import TVShow, Season, Episode, Favorites, Comments
+from CSeries.models import TVShow, Episode, Favorites
 
 
 class TVShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = TVShow
-        fields = ('id', 'show_id', 'user')
+        fields = ('id', 'name', 'original_name', 'overview', 'original_language', 'first_air_date')
 
 
-class SeasonSerializer(serializers.ModelSerializer):
+class FollowingTVShowSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Season
-        fields = ('id', 'season_id', 'number', 'tv_show', 'user')
+        model = TVShow
+        fields = ('show_id', 'user', 'date')
 
 
 class EpisodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Episode
-        fields = ('id', 'episode', 'number', 'season', 'user')
+        fields = ('id', 'air_date', 'episode_number', 'name', 'overview', 'season_number')
+
+
+class CheckedEpisodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Episode
+        fields = ('id', 'episode_id', 'number', 'user')
 
 
 class FavoritesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorites
-        fields = ('id', 'tv_show', 'user')
-
-
-class CommentsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comments
         fields = ('id', 'tv_show', 'user')
 
 

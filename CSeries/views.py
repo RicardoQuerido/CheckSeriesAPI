@@ -1,10 +1,36 @@
 from rest_framework import status
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework_simplejwt.state import User
 
-from CSeries.models import TVShow, Episode, Season, Favorites
-from CSeries.serializers import TVShowSerializer, EpisodeSerializer, SeasonSerializer, FavoritesSerializer
+from .models import TVShow, Episode, Favorites
+from CSeries.serializers import TVShowSerializer, EpisodeSerializer, FavoritesSerializer
 
+# ------------------------------------------------- Authentication
+@api_view(['POST'])
+def sign_up(request):
+    print('aqui')
+    username = request.data['username']
+    password = request.data['password']
+    user = User.objects.create(username=username, password=password)
+    user.set_password(user.password)
+    user.save()
+    return Response(status=status.HTTP_201_CREATED)
+
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'username': user.username,
+            'token': token.key
+        })
 
 # ------------------------------------------------- TV SHOWS
 @api_view(['GET'])
@@ -57,27 +83,6 @@ def unfollow_tv_show(request, id):
         return Response(status=status.HTTP_404_NOT_FOUND)
     # provavelmente tenho de apagar todos os episodios e seasons marcados tambem
     tv_show.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-# ------------------------------------------------- SEASONS
-# provavelmente desnecessário: possivelmente só é preciso guardar os episódios marcados;
-@api_view(['POST'])
-def check_season(request):
-    serializer = SeasonSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['DELETE'])
-def uncheck_season(request, id):
-    try:
-        season = Season.objects.get(id=id)
-    except Season.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    season.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
